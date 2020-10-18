@@ -13,9 +13,11 @@
  */
 GFXcanvas1 message_canvas (512, PanelHeight);
 unsigned long last_scroll = 0;
+unsigned long next_repeat = 0;
 int16_t message_scroll = 0;
 int16_t message_width = 0;
 constexpr auto message_margin = 8;
+void show_message (const String &message);
 
 /**************************************************************************/
 
@@ -26,6 +28,16 @@ bool message ()
 {
   if (message_scroll >= message_width)
   {
+    if (millis () > next_repeat)
+    {
+      auto interval = settings[F("messageRepeat")].toInt ();
+      if (interval > 0)
+      {
+        next_repeat = millis () + (interval * 1000);
+        show_message (settings[F("message")]);
+      }
+    }
+    
     return false;
   }
 
@@ -44,7 +56,7 @@ bool message ()
    * We're printing
    */
   HtmlColor html_color;
-  html_color.Parse<HtmlColorNames> (settings.at ("messageColor"));
+  html_color.Parse<HtmlColorNames> (settings.at (F("messageColor")));
   for (int i = 0; i != PanelWidth; ++i)
   {
     for (int j = 0; j != PanelHeight; ++j)

@@ -28,6 +28,7 @@ effectDecay=0
 effectSpeed=50
 masterBrightness=32
 messageColor=#1ab500
+messageRepeat=
 password=
 pingTarget=8.8.8.8
 primaryColor=#408080

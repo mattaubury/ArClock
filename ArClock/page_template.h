@@ -307,6 +307,11 @@ F = Temperature in Fahrenheit
             <input type="color" class="pure-button" style="height:2em; padding:0.2em;" name="messageColor" value="{{messageColor}}" onInput="update()" onChange="change()">
           </div>
           
+          <div class="pure-control-group">
+            <label for="messageRepeat">Repeat</label>
+            <input type="text" id="messageRepeat" name="messageRepeat" placeholder="Repeat interval in seconds" inInput="update()" onChange="change()" value="{{messageRepeat}}">
+          </div>
+          
       </fieldset>      
                   
       <fieldset>

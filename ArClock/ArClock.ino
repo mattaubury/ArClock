@@ -175,7 +175,10 @@ void setup ()
       wifi_logo (RgbColor (N > 0x180 ? N - 0x180 : 0, N > 0x100 ? 0x80 : (N > 0x80 ? N - 0x80 : 0), N > 0x180 ? N - 0x180 : 0));
       delay (15);
     }
-    show_message (F("Visit http://arclock.local to configure"));
+    String message (F("Visit http://arclock.local or http://"));
+    message += WiFi.localIP ().toString ();
+    message += F(" to configure");
+    show_message (message);
   }
   else
   {
