@@ -17,7 +17,7 @@ unsigned long next_repeat = 0;
 int16_t message_scroll = 0;
 int16_t message_width = 0;
 constexpr auto message_margin = 8;
-void show_message (const String &message);
+void show_message (String message);
 
 /**************************************************************************/
 
@@ -86,11 +86,42 @@ bool message ()
  * 
  * NB: overwrites anything already being displayed
  */
-void show_message (const String &message)
+void show_message (String message)
 {
   if (message.length () == 0)
   {
     return;
+  }
+
+  /*
+   * Transform the message - substitute in the same fields as we provide in the 
+   * clock displays
+   */
+  message.replace ("%Y", String (year));
+  message.replace ("%y", String (year % 100));
+  message.replace ("%m", String (month));
+  message.replace ("%d", String (day));
+  message.replace ("%H", String (hours));
+  message.replace ("%h", String (hours == 0 ? 12 : (hours > 12 ? hours - 12 : hours)));
+  message.replace ("%M", String (minutes));
+  message.replace ("%S", String (seconds));
+  if (ping_time < 1000)
+  {
+    message.replace ("%p", String (ping_time));
+  }
+  else
+  {
+    message.replace ("%p", "??");
+  }
+  if (celsius == -99)
+  {
+    message.replace ("%C", "??");
+    message.replace ("%F", "??");
+  }
+  else
+  {
+    message.replace ("%C", String (celsius, 1));
+    message.replace ("%F", String (32.0 + (celsius * 9) / 5, 1));
   }
   
   /*
