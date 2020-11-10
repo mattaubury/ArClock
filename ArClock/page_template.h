@@ -298,7 +298,7 @@ F = Temperature in Fahrenheit
           
           <div class="pure-control-group">
             <label for="message">Text</label>
-            <input type="text" id="message" name="message" placeholder="Enter your message" onsubmit="return show()">
+            <input type="text" id="message" name="message" placeholder="Enter your message" value="{{message}}" onsubmit="return show()">
             <button type="submit" class="pure-button pure-button-primary" onclick="return show()">Send</button>
           </div>
           

@@ -214,6 +214,9 @@ void handle_show ()
 {
   if (server.hasArg (F("message")))
   {
+    settings[F("message")] = server.arg (F("message"));
+    auto interval = settings[F("messageRepeat")].toInt ();
+    next_repeat = millis () + (interval * 1000); 
     show_message (server.arg (F("message")));
   }
 }

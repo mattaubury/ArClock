@@ -93,18 +93,30 @@ void show_message (String message)
     return;
   }
 
+  auto two_digit = [] (int n)
+  {
+    if (n < 10)
+    {
+      return String ("0" + String (n));
+    }
+    else
+    {
+      return String (n);
+    }
+  };
+
   /*
    * Transform the message - substitute in the same fields as we provide in the 
    * clock displays
    */
   message.replace ("%Y", String (year));
-  message.replace ("%y", String (year % 100));
-  message.replace ("%m", String (month));
-  message.replace ("%d", String (day));
-  message.replace ("%H", String (hours));
-  message.replace ("%h", String (hours == 0 ? 12 : (hours > 12 ? hours - 12 : hours)));
-  message.replace ("%M", String (minutes));
-  message.replace ("%S", String (seconds));
+  message.replace ("%y", two_digit (year % 100));
+  message.replace ("%m", two_digit (month));
+  message.replace ("%d", two_digit (day));
+  message.replace ("%H", two_digit (hours));
+  message.replace ("%h", two_digit (hours == 0 ? 12 : (hours > 12 ? hours - 12 : hours)));
+  message.replace ("%M", two_digit (minutes));
+  message.replace ("%S", two_digit (seconds));
   if (ping_time < 1000)
   {
     message.replace ("%p", String (ping_time));
