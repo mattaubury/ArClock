@@ -144,6 +144,17 @@ void clock (String item)
       case ':':
         print (x, y, COLON, font, color);
         break;
+      
+      case ';':
+        if (seconds & 1)
+        {
+          print (x, y, COLON, font, color);          
+        }
+        else
+        {
+          x += font.glyphs[COLON].width + 1;  
+        }
+        break;
 
       case '.':
         print (x, y, PERIOD, font, color);
