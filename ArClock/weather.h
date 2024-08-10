@@ -22,35 +22,38 @@ void fetch_weather ()
   /*
    * If timeout or location has changed, send a weather request
    */
-  static String last_location;
+  static String last_longitude;
+  static String last_latitude;
   static unsigned long last_request = 0;
-  const auto &location = settings.at (F("weatherLocation"));
-  const auto &api_key = settings[F("OWMAPIKey")];
-  if (location != last_location)
+  const auto &longitude = settings[F("longitude")];
+  const auto &latitude = settings[F("latitude")];
+  const auto changed = (longitude != last_longitude || latitude != last_latitude); 
+  if (changed)
   {
     /*
      * Invalidate
      */
     celsius = -99;
   }
-  if ((millis () - last_request > interval || location != last_location) &&
-      location.length () > 0 && api_key.length () > 0)
+  if ((millis () - last_request > interval || changed) &&
+      longitude.length () > 0 && latitude.length () > 0)
   {
     client.stop ();
     client.setTimeout (5000);
-    if (client.connect ("api.openweathermap.org", 80)) 
+    if (client.connect ("api.open-meteo.com", 80)) 
     {
-      String request (F("GET /data/2.5/forecast?q="));
-      request += location;
-      request += F("&appid=");
-      request += api_key;
-      request += F("&mode=json&units=metric&cnt=2 HTTP/1.1\n");
-      request += F("Host: api.openweathermap.org\n");
+      String request (F("GET /v1/forecast?current=temperature_2m&forecast_days=1&latitude="));
+      request += latitude;
+      request += F("&longitude=");
+      request += longitude;
+      request += F(" HTTP/1.1\n");
+      request += F("Host: api.open-meteo.com\n");
       request += F("Connection: close\n\n");
       client.print (request);
     }
     last_request = millis ();
-    last_location = location;
+    last_longitude = longitude;
+    last_latitude = latitude;
   }
     
   /*
@@ -85,28 +88,30 @@ void fetch_weather ()
     /*
      * Parse it for temperature - very basic, not trying to read most of the JSON response which looks like this:
      * 
-     * {"cod":"200","message":0,"cnt":2,"list":[{"dt":1601035200,"main":{"temp":11.28,"feels_like":3.31,"temp_min":11.28,"temp_max":12.46,"pressure":1004,"sea_level":1004,"grnd_level":999,"humidity":63,"temp_kf":-1.18},"weather":[{"id":802,"main":"Clouds","description":"scattered clouds","icon":"03d"}],"clouds":{"all":36},"wind":{"speed":9.64,"deg":326},"visibility":10000,"pop":0,"sys":{"pod":"d"},"dt_txt":"2020-09-25 12:00:00"},{"dt":1601046000,"main":{"temp":12.33,"feels_like":4.08,"temp_min":12.33,"temp_max":12.93,"pressure":1006,"sea_level":1006,"grnd_level":1001,"humidity":56,"temp_kf":-0.6},"weather":[{"id":802,"main":"Clouds","description":"scattered clouds","icon":"03d"}],"clouds":{"all":47},"wind":{"speed":9.85,"deg":329},"visibility":10000,"pop":0,"sys":{"pod":"d"},"dt_txt":"2020-09-25 15:00:00"}],"city":{"id":XXX,"name":"XXX","coord":{"lat":XXX,"lon":XXX},"country":"XX","population":XXX,"timezone":3600,"sunrise":XXX,"sunset":XXX}}
+     * {"latitude":52.52,"longitude":13.419998,"generationtime_ms":0.015020370483398438,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT","elevation":38.0,"current_units":{"time":"iso8601","interval":"seconds","temperature_2m":"°C"},"current":{"time":"2024-08-10T15:15","interval":900,"temperature_2m":25.8}}
      */
-    auto start = str.indexOf ("\"temp\":");
+    auto start = str.indexOf ("\"temperature_2m\":");
     if (start != -1)
     {
-      start += 7;
-      auto end = str.indexOf (",", start);
-      if (end != -1)
+      start = str.indexOf ("\"temperature_2m\":", start + 1);
+      if (start != -1)
       {
-        celsius = str.substring (start, end).toFloat ();
+        start += 17;
+        auto end = str.indexOf ("}", start);
+        if (end != -1)
+        {
+          celsius = str.substring (start, end).toFloat ();
+        }
       }
     }
-    else
+    
+    /*
+     * Debug
+     */
+    if (celsius == -99)
     {
-      /*
-       * Debug
-       */
-      if (celsius == -99)
-      {
-        Serial.print (F("Failed to parse weather response: "));
-        Serial.println (str);
-      }
+      Serial.print (F("Failed to parse weather response: "));
+      Serial.println (str);
     }
   }
 }

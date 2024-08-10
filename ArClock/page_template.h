@@ -208,13 +208,13 @@ const char page_template[] PROGMEM = R""(<!DOCTYPE html>
           </div>  
           
           <div class="pure-control-group">
-            <label for="weatherLocation">Weather location</label>
-            <input type="text" id="weatherLocation" name="weatherLocation" value="{{weatherLocation}}" placeholder="e.g. London,UK" onChange="change()">
+            <label for="latitude">Weather latitude</label>
+            <input type="number" name="latitude" value="{{latitude}}" onChange="change()">
           </div>
-          
+         
           <div class="pure-control-group">
-            <label for="OWMAPIKey"><a href="https://openweathermap.org/">OWM</a> API Key</label>
-            <input type="text" name="OWMAPIKey" value="{{OWMAPIKey}}" onChange="change()">
+            <label for="longitude">Weather longitude</label>
+            <input type="number" id="longitude" name="longitude" value="{{longitude}}" onChange="change()">
           </div>
 
           <div class="pure-control-group">

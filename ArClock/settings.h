@@ -20,7 +20,8 @@ Settings settings;
  * Default settings
  */
 const char default_settings[] PROGMEM = 
-R""(OWMAPIKey=
+R""(longitude=
+latitude=
 effect=None
 effectColor=#ff0022
 effectColorMode=Varying
@@ -45,7 +46,6 @@ secondaryX=23
 secondaryY=1
 ssid=
 timezone=Etc/UTC
-weatherLocation=
 )"";
 
 /**************************************************************************/
